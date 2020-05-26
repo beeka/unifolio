@@ -10,7 +10,7 @@ def divideBy100(pence):
 	return pence[:j] + '.' + pence[j:].replace('.', '')
 
 #https://www.charles-stanley-direct.co.uk/ViewShare?Sedol=0263494
-def getShare(sedol):
+def getCurrentSharePrice(sedol):
 	"""Get the current price of the specified share. Returns (title, value)"""
 	
 	url = 'https://www.charles-stanley-direct.co.uk/ViewShare?Sedol=%s' % (sedol)
@@ -24,6 +24,9 @@ def getShare(sedol):
 	title = title[:title.find(' -')]
 
 	ask = soup.findAll(attrs={"data-val" : "ask"})
+	if len(ask) == 0:
+		# Probabably not a valid share id
+		return (None, 0.0)
 	n = ask[0].contents
 	#value = float(n[0]) / 100
 	value = divideBy100(n[0])
@@ -34,7 +37,7 @@ def getShare(sedol):
 
 
 #https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=B545NX9
-def getFund(sedol):
+def getCurrentFundPrice(sedol):
 	"""Get the current price of the specified fund. Returns (title, value)"""
 
 	url = 'https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=%s' % (sedol)
@@ -56,3 +59,10 @@ def getFund(sedol):
 
 	#print value
 	return (title, value)
+
+
+def getCurrentEquityPrice(sedol):
+	result = getCurrentSharePrice(sedol)
+	if result[0] == None:
+		result = getCurrentFundPrice(sedol)
+	return result

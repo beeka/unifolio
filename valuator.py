@@ -4,15 +4,17 @@
 def getPortfolioValueAt(date):
 	import portfolio
 	import tracker
+	from decimal import Decimal
 	
-	sum = 0.0
+	sum = Decimal('0.0')
 
-	for item in portfolio.getPortfolio():
-		identifier = item['sedol']
+	p = portfolio.getPortfolioAt(date)
+	
+	for (identifier, type) in p.getEquities():
 		value = tracker.valueAt(identifier, date)
 		
-		quantity = item['quantity']
-		holding = quantity * float(value)
+		quantity = p[identifier].quantity
+		holding = quantity * Decimal(value)
 		print identifier, value, 'x', quantity, '=', holding
 
 		sum = sum + holding
