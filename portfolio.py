@@ -32,6 +32,7 @@ class Share(Equity):
 
 class Portfolio(object):
 	equities = dict()
+	capital = Decimal('0.0')
 	
 	def x__init__(self):
 		pass
@@ -50,14 +51,14 @@ class Portfolio(object):
 	def sell(self, identifier, quantity, price):
 		#print "Selling", identifier, quantity, price
 		if identifier not in self.equities:
-			print "Error: Selling something we don't have:", identifier
+			#SGB print "Error: Selling something we don't have:", identifier
 			return
 
 		self.equities[identifier].quantity = self.equities[identifier].quantity - Decimal(quantity)
 		self.equities[identifier].lastPrice = price
 
 		if self.equities[identifier].quantity < 0:
-			print "Error: Selling more than we have of", identifier, self.equities[identifier].quantity
+			#SGB print "Error: Selling more than we have of", identifier, self.equities[identifier].quantity
 			del self.equities[identifier]
 		elif self.equities[identifier].quantity == 0:
 			del self.equities[identifier]

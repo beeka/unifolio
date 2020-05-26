@@ -15,11 +15,12 @@ def getPortfolioValueAt(date):
 		
 		quantity = p[identifier].quantity
 		holding = quantity * Decimal(value)
-		print identifier, value, 'x', quantity, '=', holding
+		#print identifier, value, 'x', quantity, '=', holding
 
 		sum = sum + holding
 	
-	print "total =", sum, 'GBP'
+	#print "total =", sum, 'GBP'
+	return sum
 
 
 def getPortfolioCurrentValue():

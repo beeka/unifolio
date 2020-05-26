@@ -15,7 +15,7 @@ def readAllTransactions():
 	
 	transactions = dict()
 	for csvpath in transactionFiles():
-		print csvpath
+		#print csvpath
 		#with open(csvpath, 'a', newline='') as csvfile:
 		with open(csvpath) as csvfile:
 			reader = csv.DictReader(codecs.EncodedFile(csvfile, 'utf8', 'utf_8_sig'))
@@ -49,7 +49,7 @@ def readAllTransactions():
 				if identifier not in transactions[date]:
 					transactions[date][identifier] = dict()
 					transactions[date][identifier]['action'] = action
-					transactions[date][identifier]['value'] = value
+					transactions[date][identifier]['value'] = value.replace(',','') # Remove any thousands separators
 					transactions[date][identifier]['quantity'] = quantity
 					transactions[date][identifier]['price'] = price
 
