@@ -7,7 +7,17 @@ def transactionFiles():
 	from glob import glob
 	import os
 	return sorted(glob(os.path.join(transaction_root, '*.csv')))
+
+_transactions = None
+
+def allTransactions():
+	global _transactions
 	
+	if _transactions == None:
+		_transactions = readAllTransactions()
+	
+	return _transactions
+
 def readAllTransactions():
 	import csv
 	from datetime import datetime
