@@ -34,8 +34,9 @@ class Portfolio(object):
 	equities = dict()
 	capital = Decimal('0.0')
 	
-	def x__init__(self):
-		pass
+	def __init__(self):
+		self.equities = dict()
+		self.capital = Decimal('0.0')
 
 	def __getitem__(self, item):
 		return self.equities[item]
