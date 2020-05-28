@@ -53,21 +53,52 @@ def timeline():
 class Unitiser(object):
 	"""A simple class to count the units in a portolio. This allows true performance to be separated from value increasing through investments"""
 	
-	units = Decimal('1.0')
+	units = None
 #	pricePerUnit = Decimal('1.0')
 	
+	def __init__(self):
+		units = None
+
 	def invest(self, amount, currentValue):
-		pricePerUnit = currentValue / self.units
-		boughtUnits = amount / pricePerUnit
-		self.units = self.units + boughtUnits
+		#if self.units == None:
+		#	self.units = Decimal(amount) / pricePerUnit(currentValue)
+		#	return
+			
+		print "investing", amount, ", current value is", currentValue
+		price = self.pricePerUnit(currentValue)
+		boughtUnits = amount / price
+		print "buying", boughtUnits, "units at", price, "each"
+		if self.units == None:
+			# First investment, so just not the new units
+			self.units = boughtUnits
+		else:
+			self.units = self.units + boughtUnits
 
 	def divest(self, amount, currentValue):
-		pricePerUnit = currentValue / self.units
-		soldUnits = amount / pricePerUnit
-		self.units = self.units - soldUnits
+		print "divesting", amount, ", current value is", currentValue
+		price = self.pricePerUnit(currentValue)
+		soldUnits = amount / price
+		print "selling", soldUnits, "units at", price, "each"
+		if self.units == None:
+			print "*** Selling before we have any units!"
+		elif self.units < soldUnits:
+			print "*** Selling more than we have! (selling %s, of %s units)" % (soldUnits, self.units)
+			self.units = None
+		else:
+			self.units = self.units - soldUnits
 
 	def pricePerUnit(self, currentValue):
-		return currentValue / self.units
+		#print self.units, "units, current value is", currentValue, 'so ppu=', currentValue / self.units
+		if self.units == None:
+			return Decimal('100.0') # Starting price of 100 pounds
+		else:
+			return currentValue / self.units
+
+	def numberOfUnits(self):
+		if self.units == None:
+			return Decimal('0.0')
+		else:
+			return self.units
 
 TWOPLACES = Decimal(10) ** -2
 
@@ -85,17 +116,18 @@ def graph():
 			invested = Decimal('0.0')
 			for equity in trades[date]:
 				trade = trades[date][equity]
-				#print trade
+				print trade
 				if trade['action'] == 'buy':
 					invested = invested + Decimal(trade['value'])
 				elif trade['action'] == 'sell':
-						invested = invested - Decimal(trade['value'])
+					invested = invested - Decimal(trade['value'])
 			# TODO: Check the value used is the pre-change value
+			print "change amount is", invested
 			if invested > 0:
 				unitTracker.invest(invested, value)
 			elif invested < 0:
-				unitTracker.divest(-invested, value)
-		print date.strftime('%Y-%m-%d'), value, unitTracker.units.quantize(TWOPLACES), unitTracker.pricePerUnit(value).quantize(TWOPLACES)
+				unitTracker.divest(abs(invested), value)
+		print date.strftime('%Y-%m-%d'), value, unitTracker.numberOfUnits().quantize(TWOPLACES), unitTracker.pricePerUnit(value).quantize(TWOPLACES)
 
 
 if __name__ == "__main__":
