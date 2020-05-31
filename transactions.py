@@ -14,7 +14,8 @@ def allTransactions():
 	global _transactions
 	
 	if _transactions == None:
-		_transactions = readAllTransactions()
+		#_transactions = readAllTransactions()
+		_transactions = readEverythingCSV()
 	
 	return _transactions
 
@@ -62,6 +63,56 @@ def readAllTransactions():
 					transactions[date][identifier]['value'] = value.replace(',','') # Remove any thousands separators
 					transactions[date][identifier]['quantity'] = quantity
 					transactions[date][identifier]['price'] = price
+
+	return transactions
+
+def readEverythingCSV():
+	import csv
+	from datetime import datetime
+	from decimal import Decimal
+	import codecs
+
+	transactions = dict()
+
+	with open('everything.csv') as csvfile:
+		reader = csv.DictReader(codecs.EncodedFile(csvfile, 'utf8', 'utf_8_sig'))
+		# "Settlement Date","Date","Symbol","Sedol","ISIN","Quantity","Price","Description","Reference","Debit","Credit","Running Balance"
+		for row in reader:
+			#print row
+			#date = datetime.strptime(row['Settled'], '%d/%m/%Y %H:%M') # or Date?
+			date = datetime.strptime(row['Traded'], '%d/%m/%Y %H:%M') # NB: settlement is the date the transaction has cleared?
+			identifier = row['ISIN'][4:11] # GB00B84DY642 => B84DY64
+			if identifier == '' or row['Price'] == '':
+				continue # Fund merger or dividend?
+			quantity = Decimal(row['Quantity'])
+			price = Decimal(row['Price'][2:]) # Range to skip the unicode pound symbol
+			action = None
+			value = None
+			if quantity > 0:
+				action = 'buy'
+				value = quantity * price
+			elif quantity < 0:
+				action = 'sell'
+				value = abs(quantity) * price
+				quantity = abs(quantity)
+			#print date, identifier, quantity, 'x', price, action, value
+			
+			if identifier == '' or quantity == '':
+				continue # Probably a subscription, not a buy / sell, or a dividend
+				
+			# Add the transaction
+			if date not in transactions:
+				transactions[date] = dict()
+			
+			if identifier not in transactions[date]:
+				transactions[date][identifier] = dict()
+				transactions[date][identifier]['action'] = action
+				#transactions[date][identifier]['value'] = value.replace(',','') # Remove any thousands separators
+				transactions[date][identifier]['value'] = value
+				transactions[date][identifier]['quantity'] = quantity
+				transactions[date][identifier]['price'] = price
+			else:
+				print "*** Already have a transaction on", date, "for", identifier, "x", quantity
 
 	return transactions
 
