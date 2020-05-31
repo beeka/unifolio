@@ -91,15 +91,11 @@ def updateAll():
 	now = datetime.now()
 	
 	for (sedol, type) in portfolio.getEquities():
-		if type == 'fund':
-			(title, value) = fetch.getCurrentFundPrice(sedol)
-		if type == 'share':
-			(title, value) = fetch.getCurrentSharePrice(sedol)
-		else:
-			(title, value) = fetch.getCurrentEquityPrice(sedol)
+		(title, value) = fetch.getCurrentEquityPrice(sedol)
 
 		print now, sedol, value, title
-		store(now, sedol, value, title)
+		if value > 0:
+			store(now, sedol, value, title)
 
 
 if __name__ == "__main__":
