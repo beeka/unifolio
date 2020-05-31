@@ -51,6 +51,10 @@ def getCurrentFundPrice(sedol):
 	title = title[:title.find(' -')]
 	
 	fs = soup.findAll(attrs={"class" : "fund-summary"})
+	if len(fs) == 0:
+		# Probabably not a valid fund id
+		print 'Invalid sedol of', sedol
+		return (None, 0.0)
 	x = fs[0].find_all('span')[0].contents[0]
 	num = x.split()[0]
 	#value = float(num.replace(',','')) / 100
