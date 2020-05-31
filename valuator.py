@@ -12,6 +12,9 @@ def getPortfolioValueAt(date):
 	
 	for (identifier, type) in p.getEquities():
 		value = tracker.valueAt(identifier, date)
+		if value == None:
+			#print '*** No value for equity', identifier, p[identifier].quantity
+			continue
 		
 		quantity = p[identifier].quantity
 		holding = quantity * Decimal(value)
@@ -30,4 +33,5 @@ def getPortfolioCurrentValue():
 
 if __name__ == "__main__":
 	# execute only if run as a script
-	getPortfolioCurrentValue()
+	value = getPortfolioCurrentValue()
+	print "Current portfolio value is", value
