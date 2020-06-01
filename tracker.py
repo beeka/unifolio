@@ -47,40 +47,83 @@ def store(date, identifier, value, description = None):
 		writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 		writer.writerow({'date': str(date), 'value': value})
 
-
-def valueAt(identifier, date):
-	#print identifier, date
+def readDateValues(csvpath):
 	from datetime import datetime
+	from decimal import Decimal
 	import csv
-	import os
-	
-	csvpath = os.path.join(history_root, identifier + '.csv')
-	
-	if not os.path.exists(csvpath):
-		print "No history of prices for", identifier
-		return None
 
-	lastDate = None
-	value = None
+	values = dict()
 	
 	#with open(csvpath, 'a', newline='') as csvfile:
 	with open(csvpath) as csvfile:
 		reader = csv.DictReader(csvfile)
 		for row in reader:
-			thisDate = datetime.strptime(row['date'], '%Y-%m-%d %H:%M:%S.%f')
-			thisValue = row['value']
+			try:
+				date = datetime.strptime(row['date'], '%Y-%m-%d %H:%M:%S.%f')
+				value = row['value']
+				values[date] = Decimal(value)
+			except:
+				import sys
+				print "Unexpected error:", sys.exc_info()[0]
 
-			if lastDate == None:
-				if thisDate <= date:
-					lastDate = thisDate
-					value = thisValue
-			else:
-				if thisDate > lastDate and thisDate <= date:
-					lastDate = thisDate
-					value = thisValue
+	return values
 
-	#print "Best match is", thisDate, thisValue
-	return thisValue
+_csv_cache = dict()
+
+def equityValues(identifier):
+	import csv
+	import os
+
+	if identifier not in _csv_cache:
+		csvpath = os.path.join(history_root, identifier + '.csv')
+
+		if not os.path.exists(csvpath):
+			print "Warning: No history of prices for", identifier
+			values = dict()
+		else:
+			values = readDateValues(csvpath)
+
+		_csv_cache[identifier] = values
+	else:
+		values = _csv_cache[identifier]
+	
+	#print len(values), "datapoints for", identifier
+	return values
+
+
+def valueAt(identifier, date):
+	#print "valueAt(id='%s', date=%s)" % (identifier, date)
+
+	from datetime import datetime
+
+	values = equityValues(identifier)
+	
+	if values == None:
+		return None
+	
+	# Try our luck first with an exact match
+	if date in values:
+		return values[date]
+	
+	(beforeDate, beforeValue) = (None, None)
+	(afterDate, afterValue) = (beforeDate, beforeValue)
+
+	for thisDate in values.iterkeys():
+		if thisDate < date:
+			if beforeDate == None or thisDate > beforeDate:
+				(beforeDate, beforeValue) = (thisDate, values[thisDate])
+		elif thisDate > date:
+			if afterDate == None or thisDate < afterDate:
+				(afterDate, afterValue) = (thisDate, values[thisDate])
+
+	#print "best matches: before=", beforeDate, beforeValue, ", after=", afterDate, afterValue
+	if beforeDate == None:
+		# No prior history of this equity so use the oldest value we found
+		#print date, identifier, "best match is", afterDate, afterValue
+		return afterValue
+	else:
+		#print date, identifier, "best match is", beforeDate, beforeValue
+		return beforeValue
 
 
 def updateAll():
