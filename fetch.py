@@ -3,6 +3,7 @@
 import urllib2
 from bs4 import BeautifulSoup
 
+# TODO: Consider using Decimal() instead
 def divideBy100(pence):
 	"""Uses string operations to divide a number by 100"""
 	i = pence.index('.')
@@ -28,25 +29,21 @@ def getCurrentSharePrice(sedol):
 		# Probabably not a valid share id
 		return (None, 0.0)
 	n = ask[0].contents
-	#value = float(n[0]) / 100
 	value = divideBy100(n[0])
-	#value = n[0]
 
-	#print value
 	return (title, value)
-
 
 #https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=B545NX9
 def getCurrentFundPrice(sedol):
 	"""Get the current price of the specified fund. Returns (title, value)"""
 
+		#  https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=B545NX9
 	url = 'https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=%s' % (sedol)
 	response = urllib2.urlopen(url)
 	html_doc = response.read()
 
 	soup = BeautifulSoup(html_doc, 'html.parser')
 
-	#print soup.title
 	title = soup.title.contents[0]
 	title = title[:title.find(' -')]
 	
@@ -57,15 +54,13 @@ def getCurrentFundPrice(sedol):
 		return (None, 0.0)
 	x = fs[0].find_all('span')[0].contents[0]
 	num = x.split()[0]
-	#value = float(num.replace(',','')) / 100
-	#value = num.replace(',','')
 	value = divideBy100( num.replace(',','') )
 
-	#print value
 	return (title, value)
 
 
 def getCurrentEquityPrice(sedol):
+	#print "fetching price for '%s'" % (sedol)
 	result = getCurrentSharePrice(sedol)
 	if result[0] == None:
 		result = getCurrentFundPrice(sedol)
