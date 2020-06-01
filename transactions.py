@@ -14,12 +14,12 @@ def allTransactions():
 	global _transactions
 	
 	if _transactions == None:
-		#_transactions = readAllTransactions()
-		_transactions = readEverythingCSV()
+		#_transactions = _readAllTransactions()
+		_transactions = _readEverythingCSV()
 	
 	return _transactions
 
-def readAllTransactions():
+def _readAllTransactions():
 	import csv
 	from datetime import datetime
 	import codecs
@@ -66,7 +66,7 @@ def readAllTransactions():
 
 	return transactions
 
-def readEverythingCSV():
+def _readEverythingCSV():
 	import csv
 	from datetime import datetime
 	from decimal import Decimal
@@ -120,4 +120,4 @@ def readEverythingCSV():
 if __name__ == "__main__":
 	# execute only if run as a script
 	from pprint import pprint
-	pprint( readAllTransactions() )
+	pprint( allTransactions() )
