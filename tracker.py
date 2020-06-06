@@ -120,6 +120,8 @@ def valueAt(identifier, date):
 	if beforeDate == None:
 		# No prior history of this equity so use the oldest value we found
 		#print date, identifier, "best match is", afterDate, afterValue
+		if afterDate.year != date.year:
+			print "Using out-of-date data for", identifier, ": wanted", date, "but using data from", afterDate
 		return afterValue
 	else:
 		#print date, identifier, "best match is", beforeDate, beforeValue
