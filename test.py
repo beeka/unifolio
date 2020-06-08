@@ -36,8 +36,6 @@ def writeHistoricPrices(prices, csvpath):
 			csvfile.write("%s,%s\n" % (date.strftime('%Y-%m-%d %H:%M:%S.%f'), value))
 
 
-#def readFtPrices(ftPath):
-
 # E.g. exporting historical pricess from https://www.vanguard.co.uk/adviser/adv/detail/mf/overview?portId=9156&assetCode=EQUITY##pricesanddistributions
 # https://www.vanguard.co.uk/adviser/adv/detail/mf/overview?portId=9210&assetCode=EQUITY##pricesanddistributions
 # https://www.vanguard.co.uk/adviser/adv/detail/mf/overview?portId=9142&assetCode=BOND##pricesanddistributions
@@ -63,9 +61,11 @@ def readVanguardPrices(vanguardPath):
 			try:
 				if row['Price'] == None:
 					break # Run out of useful values, just small print now
-					
+
+				# NB: The Date/Value is likely to be closing price on that date
 				dateStr = row['Date'][2:-1]
 				date = datetime.strptime(dateStr, '%d-%m-%Y')
+				date = date.replace(hours=23, minutes=59, seconds=59)
 				value = row['Price'][3:-1] # Slice is to skip the pound sign and quotes
 				values[date] = Decimal(value)
 			except:
@@ -90,7 +90,9 @@ def readProcessedVanguardPrices(vanguardPath):
 		for row in reader:
 			print row
 			try:
+				# NB: The Date/Value is likely to be closing price on that date
 				date = datetime.strptime(row['Date'], '%d-%m-%Y')
+				date = date.replace(hours=23, minutes=59, seconds=59)
 				value = row['Value'][2:] # Slice is to skip the pound sign
 				values[date] = Decimal(value)
 			except:
@@ -144,8 +146,10 @@ def readIShares(xmlpath, csvpath):
 					a = line.find('>')
 					b = line.find('<', a)
 					try:
+						# NB: The Date/Value is likely to be closing price on that date
 						dateStr = line[a+1:b]
 						date = datetime.strptime(dateStr, '%d-%b-%y')
+						date = date.replace(hours=23, minutes=59, seconds=59)
 					except:
 						pass
 				elif 'Number' in line:
