@@ -105,14 +105,16 @@ class Unitiser(object):
 
 TWOPLACES = Decimal(10) ** -2
 
-# TOOD: Generate a csv file (rather than output to stdout)
 def graph():
 	unitTracker = Unitiser()
 	
 	import transactions
 	trades = transactions.allTransactions()
 	
-	print "date,value,numberOfUnits,pricePerUnit"
+	history = dict()
+	
+	csvfile = open('units.csv','w')
+	csvfile.write("date,value,numberOfUnits,pricePerUnit,invested\n")
 
 	for date in timeline():
 		#print "\ntimelime:", date.strftime('%Y-%m-%d %H:%M:%S')
@@ -121,7 +123,7 @@ def graph():
 		if date in trades:
 			prior = getPortfolioBefore(date)
 			prior_value = valuator.getPortfolioValueAt(date, portfolio = prior)
-			
+
 			invested = Decimal('0.0')
 			for equity in trades[date]:
 				trade = trades[date][equity]
@@ -136,11 +138,24 @@ def graph():
 
 			#print "change amount is", invested
 			if invested > 0:
-				unitTracker.invest(invested, prior_value) # TBD: prior_value
+				unitTracker.invest(invested, prior_value)
 			elif invested < 0:
 				unitTracker.divest(abs(invested), prior_value)
 
-		print date.strftime('%Y-%m-%d %H:%M:%S'), ',', value.quantize(TWOPLACES), ',', unitTracker.numberOfUnits().quantize(TWOPLACES), ',', unitTracker.pricePerUnit(value).quantize(TWOPLACES)
+		history[date] = {
+			  'date' : date,
+			  'value' : value.quantize(TWOPLACES),
+			  'units' : unitTracker.numberOfUnits().quantize(TWOPLACES),
+			  'price' :  unitTracker.pricePerUnit(value).quantize(TWOPLACES),
+			  'invested' : unitTracker.invested
+			  }
+
+		csvfile.write("%s,%s,%s,%s,%s\n" % (date.strftime('%Y-%m-%d %H:%M:%S'), value.quantize(TWOPLACES),  unitTracker.numberOfUnits().quantize(TWOPLACES),  unitTracker.pricePerUnit(value).quantize(TWOPLACES),
+			unitTracker.invested))
+
+		#print date.strftime('%Y-%m-%d %H:%M:%S'), ',', value.quantize(TWOPLACES), ',', unitTracker.numberOfUnits().quantize(TWOPLACES), ',', unitTracker.pricePerUnit(value).quantize(TWOPLACES), unitTracker.invested
+
+	return history
 
 
 if __name__ == "__main__":
