@@ -57,18 +57,20 @@ def timeline():
 class Unitiser(object):
 	"""A simple class to count the units in a portolio. This allows true performance to be separated from value increasing through investments"""
 	
-	units = None
+	from decimal import Decimal
 	
 	def __init__(self):
-		units = None
+		self.units = None
+		self.invested = Decimal('0.0') # A very simple measure of money put in
 
 	def invest(self, amount, currentValue):
 		#print "investing", amount, ", current value is", currentValue
 		price = self.pricePerUnit(currentValue)
 		boughtUnits = amount / price
+		self.invested = self.invested + amount
 		#print "buying", boughtUnits, "units at", price, "each"
 		if self.units == None:
-			# First investment, so just not the new units
+			# First investment, so just note the new units
 			self.units = boughtUnits
 		else:
 			self.units = self.units + boughtUnits
@@ -77,6 +79,7 @@ class Unitiser(object):
 		#print "divesting", amount, ", current value is", currentValue
 		price = self.pricePerUnit(currentValue)
 		soldUnits = amount / price
+		self.invested = self.invested - amount
 		#print "selling", soldUnits, "units at", price, "each"
 		if self.units == None:
 			print "*** Selling before we have any units!"
