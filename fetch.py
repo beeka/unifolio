@@ -33,6 +33,7 @@ def getCurrentSharePrice(sedol):
 
 	return (title, value)
 
+# TODO: Consider using youinvest, as it gives NAV: https://www.youinvest.co.uk/market-research/FUND%3AB5BFJG7
 #https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=B545NX9
 def getCurrentFundPrice(sedol):
 	"""Get the current price of the specified fund. Returns (title, value)"""
