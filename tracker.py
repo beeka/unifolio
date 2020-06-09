@@ -64,7 +64,7 @@ def readDateValues(csvpath):
 				values[date] = Decimal(value)
 			except:
 				import sys
-				print "Unexpected error:", sys.exc_info()[0]
+				print("Unexpected error:", sys.exc_info()[0])
 
 	return values
 
@@ -78,7 +78,7 @@ def equityValues(identifier):
 		csvpath = os.path.join(history_root, identifier + '.csv')
 
 		if not os.path.exists(csvpath):
-			print "Warning: No history of prices for", identifier
+			print("Warning: No history of prices for", identifier)
 			values = dict()
 		else:
 			values = readDateValues(csvpath)
@@ -108,7 +108,7 @@ def valueAt(identifier, date):
 	(beforeDate, beforeValue) = (None, None)
 	(afterDate, afterValue) = (beforeDate, beforeValue)
 
-	for thisDate in values.iterkeys():
+	for thisDate in values.keys():
 		if thisDate < date:
 			if beforeDate == None or thisDate > beforeDate:
 				(beforeDate, beforeValue) = (thisDate, values[thisDate])
@@ -121,7 +121,7 @@ def valueAt(identifier, date):
 		# No prior history of this equity so use the oldest value we found
 		#print date, identifier, "best match is", afterDate, afterValue
 		if afterDate.year != date.year:
-			print "Using out-of-date data for", identifier, ": wanted", date, "but using data from", afterDate
+			print("Using out-of-date data for", identifier, ": wanted", date, "but using data from", afterDate)
 		return afterValue
 	else:
 		#print date, identifier, "best match is", beforeDate, beforeValue
@@ -138,7 +138,7 @@ def updateAll():
 	for (sedol, type) in portfolio.getEquities():
 		(title, value) = fetch.getCurrentEquityPrice(sedol)
 
-		print now, sedol, value, title
+		print(now, sedol, value, title)
 		if value > 0:
 			store(now, sedol, value, title)
 

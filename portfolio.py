@@ -53,7 +53,7 @@ class Portfolio(object):
 	def sell(self, identifier, quantity, price):
 		#print "Selling", identifier, "x", quantity, "@", price, "each"
 		if identifier not in self.equities:
-			print "Error: Selling something we don't have:", identifier
+			print("Error: Selling something we don't have:", identifier)
 			return
 
 		self.equities[identifier].quantity = self.equities[identifier].quantity - Decimal(quantity)
@@ -101,11 +101,11 @@ class Portfolio(object):
 
 	def dump(self):
 		if len(self.equities) == 0:
-			print "The portfolio is empty"
+			print("The portfolio is empty")
 			return
 
 		for equity in self.equities:
-			print self.equities[equity].sedol, 'x',self.equities[equity].quantity, '@', self.equities[equity].lastPrice, 'each'
+			print(self.equities[equity].sedol, 'x',self.equities[equity].quantity, '@', self.equities[equity].lastPrice, 'each')
 
 
 def getPortfolio():

@@ -17,13 +17,13 @@ def valueToPounds():
 			n = n + 1
 			if first:
 				first = False
-				print line.strip()
+				print(line.strip())
 			else:
 				l = line.strip().split(',')
 				if len(l) < 2 or l[1] == 'null':
 					continue
 				d = Decimal(l[1]) / 100
-				print ','.join([ l[0], str(d)] )
+				print(','.join([ l[0], str(d)] ))
 			
 
 #valueToPounds()
@@ -31,7 +31,7 @@ def valueToPounds():
 def writeHistoricPrices(prices, csvpath):
 	with open(csvpath, 'w') as csvfile:
 		csvfile.write("date,value\n")
-		for date in sorted(prices.iterkeys()):
+		for date in sorted(prices.keys()):
 			value = prices[date]
 			csvfile.write("%s,%s\n" % (date.strftime('%Y-%m-%d %H:%M:%S.%f'), value))
 
@@ -70,7 +70,7 @@ def readVanguardPrices(vanguardPath):
 				values[date] = Decimal(value)
 			except:
 				import sys
-				print "Unexpected error:", sys.exc_info()[0], row
+				print("Unexpected error:", sys.exc_info()[0], row)
 
 	return values
 
@@ -88,14 +88,14 @@ def readProcessedVanguardPrices(vanguardPath):
 	with open(vanguardPath) as csvfile:
 		reader = csv.DictReader(csvfile)
 		for row in reader:
-			print row
+			print(row)
 			try:
 				date = datetime.strptime(row['Date'], '%d-%m-%Y')
 				value = row['Value'][2:] # Slice is to skip the pound sign
 				values[date] = Decimal(value)
 			except:
 				import sys
-				print "Unexpected error:", sys.exc_info()[0]
+				print("Unexpected error:", sys.exc_info()[0])
 
 	return values
 
@@ -125,7 +125,7 @@ def readIShares(xmlpath, csvpath):
 			if 'Worksheet' in line and 'Performance' in line:
 				from pprint import pprint
 				#pprint(values)
-				print isin, len(values), 'values'
+				print(isin, len(values), 'values')
 				return # already read 'Historical' worksheet
 			elif 'ISIN' in line:
 				isinNext = True
@@ -187,7 +187,7 @@ pprint(values)
 exit(0)
 
 date = datetime.strptime('2014-04-30', '%Y-%m-%d')
-print valueAt('0263494', date)
+print(valueAt('0263494', date))
 exit(0)
 
 #(name, price) = getCurrentEquityPrice('B5BFJG71')
@@ -208,5 +208,5 @@ exit(0)
 #print "======== test ========"
 
 q = getPortfolioAt(datetime.strptime('2015-02-19', '%Y-%m-%d'))
-print "======== test ========"
+print("======== test ========")
 q.dump()

@@ -74,9 +74,9 @@ class Unitiser(object):
 		soldUnits = amount / price
 		#print "selling", soldUnits, "units at", price, "each"
 		if self.units == None:
-			print "*** Selling before we have any units!"
+			print("*** Selling before we have any units!")
 		elif self.units < soldUnits:
-			print "*** Selling more than we have! (selling %s, of %s units)" % (soldUnits, self.units)
+			print("*** Selling more than we have! (selling %s, of %s units)" % (soldUnits, self.units))
 			self.units = None
 		else:
 			self.units = self.units - soldUnits
@@ -104,7 +104,7 @@ def graph():
 	import transactions
 	trades = transactions.allTransactions()
 	
-	print "date,value,numberOfUnits,pricePerUnit"
+	print("date,value,numberOfUnits,pricePerUnit")
 
 	for date in timeline():
 		#print "\ntimelime:", date.strftime('%Y-%m-%d %H:%M:%S')
@@ -132,7 +132,7 @@ def graph():
 			elif invested < 0:
 				unitTracker.divest(abs(invested), prior_value)
 
-		print date.strftime('%Y-%m-%d %H:%M:%S'), ',', value.quantize(TWOPLACES), ',', unitTracker.numberOfUnits().quantize(TWOPLACES), ',', unitTracker.pricePerUnit(value).quantize(TWOPLACES)
+		print(date.strftime('%Y-%m-%d %H:%M:%S'), ',', value.quantize(TWOPLACES), ',', unitTracker.numberOfUnits().quantize(TWOPLACES), ',', unitTracker.pricePerUnit(value).quantize(TWOPLACES))
 
 
 if __name__ == "__main__":

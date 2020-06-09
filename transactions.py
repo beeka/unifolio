@@ -112,7 +112,7 @@ def _readEverythingCSV():
 				transactions[date][identifier]['quantity'] = quantity
 				transactions[date][identifier]['price'] = price
 			else:
-				print "*** Already have a transaction on", date, "for", identifier, "x", quantity
+				print("*** Already have a transaction on", date, "for", identifier, "x", quantity)
 
 	return transactions
 

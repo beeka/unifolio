@@ -8,7 +8,7 @@ def updatePorfolioPricesFor(date, portfolio):
 	for (identifier, type) in portfolio.getEquities():
 		value = tracker.valueAt(identifier, date)
 		if value == None:
-			print '*** No value for equity', identifier, portfolio[identifier].quantity
+			print('*** No value for equity', identifier, portfolio[identifier].quantity)
 			portfolio[identifier].lastPrice = Decimal('0.0')
 			continue
 		
@@ -49,6 +49,6 @@ if __name__ == "__main__":
 	
 	value = getPortfolioValueAt(now, portfolio = portfolio)
 	
-	print "Portfolio at", now.strftime('%Y-%m-%d %H:%M:%S'), "is"
+	print("Portfolio at", now.strftime('%Y-%m-%d %H:%M:%S'), "is")
 	portfolio.dump()
-	print "Current portfolio value is", value
+	print("Current portfolio value is", value)
