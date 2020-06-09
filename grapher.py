@@ -13,6 +13,10 @@ def addMonths(sourcedate, months):
 	day = min(sourcedate.day, calendar.monthrange(year,month)[1])
 	return datetime.datetime(year, month, day, sourcedate.hour, sourcedate.minute, sourcedate.second, sourcedate.microsecond)
 
+def addDays(sourcedate, days):
+	from datetime import datetime, timedelta
+	return sourcedate + timedelta(days = days)
+
 
 def timeline():
 	from datetime import datetime
@@ -42,7 +46,8 @@ def timeline():
 	while datapoint < now:
 		if datapoint not in t:
 			t.append(datapoint)
-		datapoint = addMonths(datapoint, 1)
+		#datapoint = addMonths(datapoint, 1)
+		datapoint = addDays(datapoint, 1)
 		
 	t.append(now)
 
