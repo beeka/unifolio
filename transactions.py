@@ -58,11 +58,13 @@ def _readAllTransactions():
 					transactions[date] = dict()
 				
 				if identifier not in transactions[date]:
-					transactions[date][identifier] = dict()
-					transactions[date][identifier]['action'] = action
-					transactions[date][identifier]['value'] = value.replace(',','') # Remove any thousands separators
-					transactions[date][identifier]['quantity'] = quantity
-					transactions[date][identifier]['price'] = price
+					transactions[date][identifier] = {
+						'action' : action,
+						'isin' : identifier,
+						'sedol' : identifier,
+						'value' : value.replace(',',''), # Remove any thousands separators,
+						'quantity' : quantity,
+						'price' : price}
 
 	return transactions
 
@@ -105,12 +107,13 @@ def _readEverythingCSV():
 				transactions[date] = dict()
 			
 			if identifier not in transactions[date]:
-				transactions[date][identifier] = dict()
-				transactions[date][identifier]['action'] = action
-				#transactions[date][identifier]['value'] = value.replace(',','') # Remove any thousands separators
-				transactions[date][identifier]['value'] = value
-				transactions[date][identifier]['quantity'] = quantity
-				transactions[date][identifier]['price'] = price
+				transactions[date][identifier] = {
+				'action' : action,
+				'isin' : isin,
+				'sedol' : sedol,
+				'value' : value,
+				'quantity' : quantity,
+				'price' : price}
 			else:
 				print("*** Already have a transaction on", date, "for", identifier, "x", quantity)
 
