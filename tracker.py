@@ -117,7 +117,7 @@ def valueAt(identifier, date):
 				(afterDate, afterValue) = (thisDate, values[thisDate])
 
 	#print "best matches: before=", beforeDate, beforeValue, ", after=", afterDate, afterValue
-	if beforeDate == None:
+	if beforeDate == None and afterDate != None:
 		# No prior history of this equity so use the oldest value we found
 		#print date, identifier, "best match is", afterDate, afterValue
 		if afterDate.year != date.year:
