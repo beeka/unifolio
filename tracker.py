@@ -47,6 +47,7 @@ def store(date, identifier, value, description = None):
 		writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 		writer.writerow({'date': str(date), 'value': value})
 
+
 def readDateValues(csvpath):
 	from datetime import datetime
 	from decimal import Decimal
@@ -64,7 +65,8 @@ def readDateValues(csvpath):
 				values[date] = Decimal(value)
 			except:
 				import sys
-				print("Unexpected error:", sys.exc_info()[0])
+				print("Unexpected error:", sys.exc_info()[0], csvpath)
+				raise
 
 	return values
 
