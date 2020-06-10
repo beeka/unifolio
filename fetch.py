@@ -1,9 +1,24 @@
 #!/usr/bin/env python
 
-import urllib2
 from bs4 import BeautifulSoup
-
 from decimal import Decimal
+
+
+def getHttpPage(url):
+	"""Fetch a url HTTP page and return the contents"""
+	try:
+		# Try the Python-3 way first
+		import urllib.request, urllib.error, urllib.parse
+		response = urllib.request.urlopen(url)
+		html_doc = response.read()
+		return html_doc
+
+	except:
+		# That didn't work, so try Python-2 style
+		import urllib2
+		response = urllib2.urlopen(url)
+		html_doc = response.read()
+		return html_doc
 
 
 #https://www.charles-stanley-direct.co.uk/ViewShare?Sedol=0263494
@@ -11,8 +26,7 @@ def getCurrentSharePrice(sedol):
 	"""Get the current price of the specified share. Returns (title, value)"""
 	
 	url = 'https://www.charles-stanley-direct.co.uk/ViewShare?Sedol=%s' % (sedol)
-	response = urllib2.urlopen(url)
-	html_doc = response.read()
+	html_doc = getHttpPage(url)
 
 	soup = BeautifulSoup(html_doc, 'html.parser')
 
@@ -28,6 +42,7 @@ def getCurrentSharePrice(sedol):
 
 	return (title, value)
 
+
 # TODO: Consider using youinvest, as it gives NAV: https://www.youinvest.co.uk/market-research/FUND%3AB5BFJG7
 #https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=B545NX9
 def getCurrentFundPrice(sedol):
@@ -35,8 +50,7 @@ def getCurrentFundPrice(sedol):
 
 		#  https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=B545NX9
 	url = 'https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=%s' % (sedol)
-	response = urllib2.urlopen(url)
-	html_doc = response.read()
+	html_doc = getHttpPage(url)
 
 	soup = BeautifulSoup(html_doc, 'html.parser')
 
