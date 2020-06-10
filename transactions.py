@@ -83,7 +83,9 @@ def _readEverythingCSV():
 			#print row
 			#date = datetime.strptime(row['Settled'], '%d/%m/%Y %H:%M') # or Date?
 			date = datetime.strptime(row['Traded'], '%d/%m/%Y %H:%M') # NB: settlement is the date the transaction has cleared?
-			identifier = row['ISIN'][4:11] # GB00B84DY642 => B84DY64
+			isin = row['ISIN'] # e.g. GB00B84DY642
+			sedol = isin[4:11] # GB00B84DY642 => B84DY64
+			identifier = isin
 			if identifier == '' or row['Price'] == '':
 				continue # Fund merger or dividend?
 			quantity = Decimal(row['Quantity'])

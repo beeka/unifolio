@@ -56,8 +56,13 @@ def getCurrentFundPrice(sedol):
 
 
 def getCurrentEquityPrice(sedol):
+	if len(sedol) == 12: # probably an ISIN
+		# extract what is likely to be the sedol
+		sedol = sedol[4:11] # GB00B84DY642 => B84DY64
+
 	#print "fetching price for '%s'" % (sedol)
 	result = getCurrentSharePrice(sedol)
 	if result[0] == None:
 		result = getCurrentFundPrice(sedol)
+
 	return result
