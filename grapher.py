@@ -116,7 +116,7 @@ def getEntryBefore(entries, date):
 		return entries[date]
 	else:
 		bestDate = None
-		for thisDate in entries.iterkeys():
+		for thisDate in entries.keys():
 			if thisDate < date:
 				if bestDate == None or thisDate > bestDate:
 					bestDate = thisDate
@@ -178,7 +178,7 @@ def determinePerformance(history):
 				oneYearPerformance = ppuChangePercent
 
 			arr = annualisedReturn(ppuChangePercent, n)
-			print "Year -%s performance was %s%%. Cummulative AER of %s%% (%s%% total return)" % (n, round(oneYearPerformance, 2), round(arr, 2), round(ppuChangePercent, 2))
+			print("Year -%s performance was %s%%. Cummulative AER of %s%% (%s%% total return)" % (n, round(oneYearPerformance, 2), round(arr, 2), round(ppuChangePercent, 2)))
 			performance[n] = {
 				'duration' : n,
 				'indvidual' : oneYearPerformance,
@@ -195,7 +195,7 @@ def determinePerformance(history):
 			n = float((recentDate - firstDate).days) / 365
 			arr = annualisedReturn(ppuChangePercent, n)
 			#print "All-time increase: %s%% over %s years (%s%% annualised)" % ( round(ppuChangePercent, 2), round(n, 2), "{:.2f}".format(arr))
-			print "%s%% effective annual rate of return over %s years (%s%% total return)" % (round(arr, 2), round(n, 2), round(ppuChangePercent, 2))
+			print("%s%% effective annual rate of return over %s years (%s%% total return)" % (round(arr, 2), round(n, 2), round(ppuChangePercent, 2)))
 			performance[n] = {
 				'duration' : n,
 				'indvidual' : None,
