@@ -3,12 +3,8 @@
 import urllib2
 from bs4 import BeautifulSoup
 
-# TODO: Consider using Decimal() instead
-def divideBy100(pence):
-	"""Uses string operations to divide a number by 100"""
-	i = pence.index('.')
-	j = i - 2
-	return pence[:j] + '.' + pence[j:].replace('.', '')
+from decimal import Decimal
+
 
 #https://www.charles-stanley-direct.co.uk/ViewShare?Sedol=0263494
 def getCurrentSharePrice(sedol):
@@ -28,8 +24,7 @@ def getCurrentSharePrice(sedol):
 	if len(ask) == 0:
 		# Probabably not a valid share id
 		return (None, 0.0)
-	n = ask[0].contents
-	value = divideBy100(n[0])
+	value = Decimal(ask[0].contents[0]) / 100
 
 	return (title, value)
 
@@ -54,8 +49,8 @@ def getCurrentFundPrice(sedol):
 		print('Invalid sedol of', sedol)
 		return (None, 0.0)
 	x = fs[0].find_all('span')[0].contents[0]
-	num = x.split()[0]
-	value = divideBy100( num.replace(',','') )
+	num = x.split()[0].replace(',','')
+	value = Decimal(num) / 100
 
 	return (title, value)
 
