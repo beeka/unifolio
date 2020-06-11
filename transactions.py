@@ -15,7 +15,7 @@ def allTransactions():
 	
 	if _transactions == None:
 		#_transactions = _readAllTransactions()
-		_transactions = _readEverythingCSV()
+		_transactions = _readTransactionsCSV()
 	
 	return _transactions
 
@@ -68,7 +68,8 @@ def _readAllTransactions():
 
 	return transactions
 
-def _readEverythingCSV():
+
+def _readTransactionsCSV(transactionsFilePath = 'transactions.csv'):
 	import csv
 	from datetime import datetime
 	from decimal import Decimal
@@ -76,7 +77,7 @@ def _readEverythingCSV():
 
 	transactions = dict()
 
-	with open('everything.csv') as csvfile:
+	with open(transactionsFilePath) as csvfile:
 		reader = csv.DictReader(codecs.EncodedFile(csvfile, 'utf8', 'utf_8_sig'))
 		# "Settlement Date","Date","Symbol","Sedol","ISIN","Quantity","Price","Description","Reference","Debit","Credit","Running Balance"
 		for row in reader:
