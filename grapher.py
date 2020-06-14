@@ -212,7 +212,6 @@ def determinePerformance(history):
 
 TWOPLACES = Decimal(10) ** -2
 
-def graph():
 def graph(historyCsvFilePath = 'units.csv'):
 	unitTracker = Unitiser()
 	
