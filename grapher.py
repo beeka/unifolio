@@ -64,11 +64,11 @@ class Unitiser(object):
 		self.invested = Decimal('0.0') # A very simple measure of money put in
 
 	def invest(self, amount, currentValue):
-		#print "investing", amount, ", current value is", currentValue
+		#print("investing", amount, ", current value is", currentValue)
 		price = self.pricePerUnit(currentValue)
 		boughtUnits = amount / price
 		self.invested = self.invested + amount
-		#print "buying", boughtUnits, "units at", price, "each"
+		#print("buying", boughtUnits, "units at", price, "each")
 		if self.units == None:
 			# First investment, so just note the new units
 			self.units = boughtUnits
@@ -76,11 +76,11 @@ class Unitiser(object):
 			self.units = self.units + boughtUnits
 
 	def divest(self, amount, currentValue):
-		#print "divesting", amount, ", current value is", currentValue
+		#print("divesting", amount, ", current value is", currentValue)
 		price = self.pricePerUnit(currentValue)
 		soldUnits = amount / price
 		self.invested = self.invested - amount
-		#print "selling", soldUnits, "units at", price, "each"
+		#print("selling", soldUnits, "units at", price, "each")
 		if self.units == None:
 			print("*** Selling before we have any units!")
 		elif self.units < soldUnits:
@@ -90,7 +90,7 @@ class Unitiser(object):
 			self.units = self.units - soldUnits
 
 	def pricePerUnit(self, currentValue):
-		#print self.units, "units, current value is", currentValue, 'so ppu=', currentValue / self.units
+		#print(self.units, "units, current value is", currentValue, 'so ppu=', currentValue / self.units)
 		if self.units == None:
 			return Decimal('100.0') # Starting price of 100 pounds
 		else:
@@ -144,10 +144,13 @@ def ppuIncrease(entries, startDate, endDate):
 	"""Return the percentage increase from one date to another. Returns the value in human-readable form, e.g. 20.42 rather than 0.2842. Returns 0.0 on error."""
 	try:
 		startEntry = getEntryBefore(entries, startDate)
+		#print("start = %s => %s" % (startDate, startEntry))
 		endEntry = getEntryBefore(entries, endDate)
+		#print("end = %s => %s" % (endDate, endEntry))
 		startPrice = float(startEntry['price'])
 		endPrice = float(endEntry['price'])
 		ppuChangePercent = ((endPrice - startPrice) / startPrice) * 100
+		#print("ppuChangePercent = ((%s - %s) / %s) * 100 == %s" % (endPrice, startPrice, startPrice, ppuChangePercent))
 		return ppuChangePercent
 	except:
 		return 0.0
@@ -221,7 +224,7 @@ def graph():
 	csvfile.write("date,value,numberOfUnits,pricePerUnit,invested\n")
 
 	for date in timeline():
-		#print "\ntimelime:", date.strftime('%Y-%m-%d %H:%M:%S')
+		#print("\ntimelime:", date.strftime('%Y-%m-%d %H:%M:%S'))
 		import valuator
 		value = valuator.getPortfolioValueAt(date)
 		if date in trades:
@@ -231,7 +234,7 @@ def graph():
 			invested = Decimal('0.0')
 			for equity in trades[date]:
 				trade = trades[date][equity]
-				#print equity, trade
+				#print(equity, trade)
 				if trade['action'] == 'buy':
 					invested = invested + Decimal(trade['value'])
 				elif trade['action'] == 'sell':
@@ -240,7 +243,7 @@ def graph():
 			since = getPortfolioAt(date)
 			since_value = valuator.getPortfolioValueAt(date, portfolio = since)
 
-			#print "change amount is", invested
+			#print("change amount is", invested)
 			if invested > 0:
 				unitTracker.invest(invested, prior_value)
 			elif invested < 0:

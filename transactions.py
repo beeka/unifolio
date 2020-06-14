@@ -32,7 +32,7 @@ def _readAllTransactions():
 			reader = csv.DictReader(codecs.EncodedFile(csvfile, 'utf8', 'utf_8_sig'))
 			# "Settlement Date","Date","Symbol","Sedol","ISIN","Quantity","Price","Description","Reference","Debit","Credit","Running Balance"
 			for row in reader:
-				#print row
+				#print(row)
 				#date = datetime.strptime(row['Settlement Date'], '%d/%m/%Y') # or Date?
 				date = datetime.strptime(row['Date'], '%d/%m/%Y') # NB: settlement is the date the transaction has cleared?
 				identifier = row['Sedol']
@@ -81,7 +81,7 @@ def _readTransactionsCSV(transactionsFilePath = 'transactions.csv'):
 		reader = csv.DictReader(codecs.EncodedFile(csvfile, 'utf8', 'utf_8_sig'))
 		# "Settlement Date","Date","Symbol","Sedol","ISIN","Quantity","Price","Description","Reference","Debit","Credit","Running Balance"
 		for row in reader:
-			#print row
+			#print(row)
 			#date = datetime.strptime(row['Settled'], '%d/%m/%Y %H:%M') # or Date?
 			date = datetime.strptime(row['Traded'], '%d/%m/%Y %H:%M') # NB: settlement is the date the transaction has cleared?
 			isin = row['ISIN'] # e.g. GB00B84DY642
@@ -100,7 +100,7 @@ def _readTransactionsCSV(transactionsFilePath = 'transactions.csv'):
 				action = 'sell'
 				value = abs(quantity) * price
 				quantity = abs(quantity)
-			#print date, identifier, quantity, 'x', price, action, value
+			#print(date, identifier, quantity, 'x', price, action, value)
 			
 			if identifier == '' or quantity == '':
 				continue # Probably a subscription, not a buy / sell, or a dividend
