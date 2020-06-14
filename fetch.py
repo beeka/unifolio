@@ -43,7 +43,65 @@ def getCurrentSharePrice(sedol):
 	return (title, value)
 
 
-# TODO: Consider using youinvest, as it gives NAV: https://www.youinvest.co.uk/market-research/FUND%3AB5BFJG7
+# Use youinvest, as it gives NAV:
+# https://www.youinvest.co.uk/market-research/FUND%3AB5BFJG7
+def getCurrentFundNav(sedol):
+	"""Get the current price of the specified fund in pounds. Returns (title, value)"""
+
+		#  https://www.youinvest.co.uk/market-research/FUND%3AB5BFJG7
+	url = 'https://www.youinvest.co.uk/market-research/FUND%%3A%s' % (sedol)
+	html_doc = getHttpPage(url)
+
+	soup = BeautifulSoup(html_doc, 'html.parser')
+	#print(soup.prettify())
+	#exit(0)
+
+    # <span class="securityName">
+    # iShares Global Property Securities Equity Index Fund (UK) D Acc
+    # </span>
+	fs = soup.findAll(attrs={"class" : "securityName"})
+	if len(fs) > 0:
+		title = fs[0].contents[0]
+	else:
+		title = soup.title.contents[0]
+		title = title[:title.find(' -')]
+
+    # <tr class="alternate" id="KeyStatsLatestNav">
+	#	<th scope="row">
+	#		NAV
+	#		<span class="date">12/06/2020</span>
+	#	</th>
+	#	<td>
+	#		GBX 196.30
+	#	</td>
+	# </tr>
+	try:
+		navHtml = soup.find(id='KeyStatsLatestNav')
+
+		# Determine the date of the valuation (not currently used
+		date = navHtml.find(attrs={'class': 'date'}).contents[0]
+
+		nav = navHtml.td.contents[0]
+		space = nav.find(' ')
+		if space != -1:
+			currency = nav[:space]
+			nav = nav[space+1:]
+			# GBX means pence, while GBP means pounds
+			if currency == 'GBX':
+				# Need to convert to pounds
+				value = Decimal(nav) / 100
+			else:
+				value = Decimal(nav)
+		else:
+			value = Decimal(nav)
+
+	except:
+		print("There was a problem fetching NAV from " + url)
+		return (None, None)
+
+	return (title, value)
+
+
 #https://www.charles-stanley-direct.co.uk/ViewFund?Sedol=B545NX9
 def getCurrentFundPrice(sedol):
 	"""Get the current price of the specified fund. Returns (title, value)"""
@@ -77,6 +135,7 @@ def getCurrentEquityPrice(sedol):
 	#print "fetching price for '%s'" % (sedol)
 	result = getCurrentSharePrice(sedol)
 	if result[0] == None:
-		result = getCurrentFundPrice(sedol)
+		#result = getCurrentFundPrice(sedol)
+		result = getCurrentFundNav(sedol)
 
 	return result
