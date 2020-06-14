@@ -3,6 +3,21 @@
 
 transaction_root = 'transactions'
 
+
+def numberIn(s):
+	"""Return a Decimal from a string that might have unicode pound symbols and commas"""
+	number = str()
+	for c in s:
+		if c in '0123456789.':
+			number = number + c
+	
+	if len(number) > 0:
+		from decimal import Decimal
+		return Decimal(number)
+	else:
+		return None
+
+
 def transactionFiles():
 	from glob import glob
 	import os
@@ -37,18 +52,18 @@ def _readAllTransactions():
 				date = datetime.strptime(row['Date'], '%d/%m/%Y') # NB: settlement is the date the transaction has cleared?
 				identifier = row['Sedol']
 				quantity = row['Quantity']
-				price = row['Price'][2:] # Range to skip the unicode pound symbol
+				price = numberIn(row['Price'])
 				debit = row['Debit']
 				credit = row['Credit']
 				action = None
 				value = None
 				if debit != '':
 					action = 'buy'
-					value = debit[2:]
+					value = numberIn(debit)
 				elif credit != '':
 					action = 'sell'
-					value = credit[2:] # Range to skip the unicode pound symbol
-				#print date, identifier, quantity, 'x', price, debit, credit, action, value
+					value = numberIn(credit)
+				#print(date, identifier, quantity, 'x', price, debit, credit, action, value)
 				
 				if identifier == '' or quantity == '':
 					continue # Probably a subscription, not a buy / sell, or a dividend
@@ -62,7 +77,7 @@ def _readAllTransactions():
 						'action' : action,
 						'isin' : identifier,
 						'sedol' : identifier,
-						'value' : value.replace(',',''), # Remove any thousands separators,
+						'value' : value,
 						'quantity' : quantity,
 						'price' : price}
 
@@ -90,7 +105,7 @@ def _readTransactionsCSV(transactionsFilePath = 'transactions.csv'):
 			if identifier == '' or row['Price'] == '':
 				continue # Fund merger or dividend?
 			quantity = Decimal(row['Quantity'])
-			price = Decimal(row['Price'][2:]) # Range to skip the unicode pound symbol
+			price = numberIn(row['Price'])
 			action = None
 			value = None
 			if quantity > 0:
