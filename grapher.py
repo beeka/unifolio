@@ -213,6 +213,7 @@ def determinePerformance(history):
 TWOPLACES = Decimal(10) ** -2
 
 def graph():
+def graph(historyCsvFilePath = 'units.csv'):
 	unitTracker = Unitiser()
 	
 	import transactions
@@ -220,7 +221,7 @@ def graph():
 	
 	history = dict()
 	
-	csvfile = open('units.csv','w')
+	csvfile = open(historyCsvFilePath,'w')
 	csvfile.write("date,value,numberOfUnits,pricePerUnit,invested\n")
 
 	for date in timeline():
