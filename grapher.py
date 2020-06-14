@@ -26,7 +26,7 @@ def timeline():
 	if len(t) == 0:
 		return t
 
-	# Use the earliest transaction as the initiate time
+	# Use the earliest transaction as the initial time
 	datapoint = t[0]
 	
 	# Standardise the reference time as the end of the day
