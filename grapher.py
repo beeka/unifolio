@@ -90,10 +90,10 @@ class Unitiser(object):
 			self.units = self.units - soldUnits
 
 	def pricePerUnit(self, currentValue):
-		#print(self.units, "units, current value is", currentValue, 'so ppu=', currentValue / self.units)
 		if self.units == None:
 			return Decimal('100.0') # Starting price of 100 pounds
 		else:
+			#print("Have", self.units, "units, current value is", currentValue, 'so ppu=', currentValue / self.units)
 			return currentValue / self.units
 
 	def numberOfUnits(self):
