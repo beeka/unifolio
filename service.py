@@ -35,7 +35,6 @@ def runScheduler():
 	
 	# Set the next run time for 11pm today
 	nextTime = datetime.combine(date.today(), time(23, 0,0 , 0))
-	#nextTime = datetime.now()
 	print("Sleeping until", nextTime.strftime('%d/%m/%Y %H:%M'))
 	
 	# Simple schedule to start with... every five minutes
