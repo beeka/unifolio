@@ -19,12 +19,22 @@ def update():
 	import valuator
 	value = valuator.getPortfolioValueAt(now, portfolio = portfolio)
 	
-	print("Portfolio at", now.strftime('%Y-%m-%d %H:%M:%S'), "is")
-	portfolio.dump()
-	print("Current portfolio value is", value)
+	import paths
+	statusPath = paths.dataFilePath("portfolio.txt")
+	with open(statusPath, 'w') as statusFile:
+		print("Portfolio at", now.strftime('%Y-%m-%d %H:%M:%S'), "is", file = statusFile)
+		portfolio.dump(statusFile)
+		print("Current portfolio value is", value, file = statusFile)
 	
 	import grapher
-	grapher.graph()
+	history = grapher.determineUnitHistory()
+	historyPath = paths.dataFilePath("history.csv")
+	grapher.writeUnitHistory(history, historyPath)
+
+	perf = grapher.determinePerformance(history)
+	performancePath = paths.dataFilePath("performance.txt")
+	grapher.writePerformance(perf, performancePath)
+
 
 
 def runScheduler():

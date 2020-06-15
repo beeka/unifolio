@@ -156,6 +156,26 @@ def ppuIncrease(entries, startDate, endDate):
 		return 0.0
 
 
+def writePerformance(performance, outputFilePath = 'performance.txt'):
+	"""Output past performance to the specified text fle"""
+
+	with open(outputFilePath, 'w') as outputFile:
+		for year in sorted(performance.keys()):
+			n = performance[year]['duration']
+			oneYearPerformance = performance[year]['indvidual']
+			ppuChangePercent = performance[year]['cumulative']
+			arr = performance[year]['effective']
+
+			if oneYearPerformance != None:
+				print("Year -%s performance was %s%%. Cummulative AER of %s%% (%s%% total return)" 
+					% (n, round(oneYearPerformance, 2), round(arr, 2), round(ppuChangePercent, 2)),
+					file = outputFile)
+			else:
+				print("%s%% effective annual rate of return over %s years (%s%% total return)" 
+					% (round(arr, 2), round(n, 2), round(ppuChangePercent, 2)), 
+					file = outputFile)
+				
+
 def determinePerformance(history):
 	"""Determine performance for the last 1,2..10 years.
 	This calculates performance backwards from the last entry in the history. This could cause the figures to be unstable as it measures the performance between different days each time the history is extended."""
@@ -181,7 +201,7 @@ def determinePerformance(history):
 				oneYearPerformance = ppuChangePercent
 
 			arr = annualisedReturn(ppuChangePercent, n)
-			print("Year -%s performance was %s%%. Cummulative AER of %s%% (%s%% total return)" % (n, round(oneYearPerformance, 2), round(arr, 2), round(ppuChangePercent, 2)))
+
 			performance[n] = {
 				'duration' : n,
 				'indvidual' : oneYearPerformance,
@@ -197,8 +217,7 @@ def determinePerformance(history):
 			ppuChangePercent = ppuIncrease(history, firstDate, recentDate)
 			n = float((recentDate - firstDate).days) / 365
 			arr = annualisedReturn(ppuChangePercent, n)
-			#print "All-time increase: %s%% over %s years (%s%% annualised)" % ( round(ppuChangePercent, 2), round(n, 2), "{:.2f}".format(arr))
-			print("%s%% effective annual rate of return over %s years (%s%% total return)" % (round(arr, 2), round(n, 2), round(ppuChangePercent, 2)))
+
 			performance[n] = {
 				'duration' : n,
 				'indvidual' : None,
@@ -210,9 +229,25 @@ def determinePerformance(history):
 	return performance
 
 
+
+def writeUnitHistory(history, csvFilePath = 'history.csv'):
+	"""Output unitised history to the specified CSV file"""
+
+	with open(csvFilePath, 'w') as csvfile:
+		csvfile.write("date,value,numberOfUnits,pricePerUnit,invested\n")
+
+		for date in sorted(history.keys()):
+			entry = history[date]
+
+			csvfile.write("%s,%s,%s,%s,%s\n" % (date.strftime('%Y-%m-%d %H:%M:%S'), 
+				entry['value'],  entry['units'], entry['price'], entry['invested']))
+
+
+
 TWOPLACES = Decimal(10) ** -2
 
-def graph(historyCsvFilePath = 'units.csv'):
+def determineUnitHistory():
+	"""Use global functions / data to determine the unit history of the portfolio"""
 	unitTracker = Unitiser()
 	
 	import transactions
@@ -220,9 +255,6 @@ def graph(historyCsvFilePath = 'units.csv'):
 	
 	history = dict()
 	
-	csvfile = open(historyCsvFilePath,'w')
-	csvfile.write("date,value,numberOfUnits,pricePerUnit,invested\n")
-
 	for date in timeline():
 		#print("\ntimelime:", date.strftime('%Y-%m-%d %H:%M:%S'))
 		import valuator
@@ -256,19 +288,11 @@ def graph(historyCsvFilePath = 'units.csv'):
 			  'price' :  unitTracker.pricePerUnit(value).quantize(TWOPLACES),
 			  'invested' : unitTracker.invested
 			  }
-
-		csvfile.write("%s,%s,%s,%s,%s\n" % (date.strftime('%Y-%m-%d %H:%M:%S'), value.quantize(TWOPLACES),  unitTracker.numberOfUnits().quantize(TWOPLACES),  unitTracker.pricePerUnit(value).quantize(TWOPLACES),
-			unitTracker.invested))
-
-		#print date.strftime('%Y-%m-%d %H:%M:%S'), ',', value.quantize(TWOPLACES), ',', unitTracker.numberOfUnits().quantize(TWOPLACES), ',', unitTracker.pricePerUnit(value).quantize(TWOPLACES), unitTracker.invested
-
-	perf = determinePerformance(history)
-	#from pprint import pprint
-	#pprint(perf)
 	
 	return history
 
 
 if __name__ == "__main__":
 	# execute only if run as a script
-	graph()
+	history = determineUnitHistory()
+	writeUnitHistory(history, "units.csv")

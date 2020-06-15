@@ -99,13 +99,13 @@ class Portfolio(object):
 		return sum
 
 
-	def dump(self):
+	def dump(self, outputFile = None):
 		if len(self.equities) == 0:
-			print("The portfolio is empty")
+			print("The portfolio is empty", file = outputFile)
 			return
 
-		for equity in self.equities:
-			print(self.equities[equity].sedol, 'x',self.equities[equity].quantity, '@', self.equities[equity].lastPrice, 'each')
+		for equity in sorted(self.equities.keys()):
+			print(self.equities[equity].sedol, 'x',self.equities[equity].quantity, '@', self.equities[equity].lastPrice, 'each', file = outputFile)
 
 
 def getPortfolio():
