@@ -93,7 +93,8 @@ def _readTransactionsCSV(transactionsFilePath = 'transactions.csv'):
 	transactions = dict()
 
 	with open(transactionsFilePath) as csvfile:
-		reader = csv.DictReader(codecs.EncodedFile(csvfile, 'utf8', 'utf_8_sig'))
+		#reader = csv.DictReader(codecs.EncodedFile(csvfile, 'utf8', 'utf_8_sig'))
+		reader = csv.DictReader(csvfile)
 		# "Settlement Date","Date","Symbol","Sedol","ISIN","Quantity","Price","Description","Reference","Debit","Credit","Running Balance"
 		for row in reader:
 			#print(row)
