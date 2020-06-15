@@ -11,16 +11,14 @@ def writeHistoricPrices(prices, csvpath):
 
 	
 # e.g. from https://www.blackrock.com/uk/individual/products/230271/blackrock-emerging-markets-equity-tracker-fund-class-d-acc-fund?switchLocale=y&siteEntryPassthrough=true
-def readIShares(xmlpath, csvpath = None):
+def readIShares(xmlpath):
 	from decimal import Decimal
 	from datetime import datetime, time
 
 	with open(xmlpath) as f:
 
 		values = dict()
-
-		csvfile = None
-		
+	
 		title = None
 		isinNext = False
 		isin = None
@@ -30,7 +28,8 @@ def readIShares(xmlpath, csvpath = None):
 		for line in f:
 			if 'Worksheet' in line and 'Performance' in line:
 				#print(isin, len(values), 'values')
-				break # already read 'Historical' worksheet
+				# already read 'Historical' worksheet, so return our work so far
+				return (isin, title, values)
 			elif 'ISIN' in line:
 				isinNext = True
 			elif '<ss:Data' in line:
@@ -39,9 +38,6 @@ def readIShares(xmlpath, csvpath = None):
 					b = line.find('<', a)
 					isin = line[a+1:b]
 					isinNext = False
-					csvpath = 'prices/%s.csv' % (isin)
-					csvfile = open(csvpath, 'w')
-					csvfile.write("date,value\n")
 
 				elif 'String' in line: # This has the date
 					# <ss:Data ss:Type=""String"">06-May-20</ss:Data>
@@ -63,15 +59,14 @@ def readIShares(xmlpath, csvpath = None):
 					value = Decimal(line[a+1:b])
 			if '</ss:Row>' in line:
 				if date != None and value != None:
-					csvfile.write("%s,%s\n" % (date.strftime('%Y-%m-%d %H:%M:%S.%f'), value))
 					values[date] = value
 					date = None
 					value = None
-
-				date = None
-				value = None
 	
-	return csvpath
+	# Something didn't go right if we got here
+	return (None, None, None)
+
+
 # E.g. exporting historical prices from www.vanguard.co.uk
 def readVanguardPrices(vanguardPath):
 	# FTSE Developed World ex-U.K. Equity Index Fund
@@ -125,5 +120,8 @@ if __name__ == "__main__":
 	
 	for xlsPath in glob('import/*.xls'):
 		print("Importing BlackRock data from", xlsPath)
-		csvPath = readIShares(xlsPath)
-		print("Saved as", csvPath)
+		(isin, title, values) = readIShares(xlsPath)
+		csvPath = os.path.join('prices', '%s.csv' % (isin))
+		writeHistoricPrices(values, csvPath)
+		print("Saved %s data points as %s" % (len(values), csvPath))
+
