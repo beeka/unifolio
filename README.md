@@ -49,3 +49,12 @@ there is no direct support for computer-based download.
 ### Company site
 
 Sometimes the company will have downloadable historical data from their website, e.g. https://investors.baesystems.com/share-price-information/share-monitor
+
+
+## TODO
+
+Support needs adding for dividends. They should be considered as an increase in value but without changing the number of shares.
+A similar concept would be to have an explict cash component. An alternative approach is to consider it a withdrawal of investment
+ (so increasing the ROI). 
+
+Using matplotlib to generate pretty pictures would be nice.
