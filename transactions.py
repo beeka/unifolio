@@ -19,11 +19,24 @@ def numberIn(s):
 _transactions = None
 
 
+def determineTransactionsFilePath():
+	import paths
+	transactionsPath = paths.dataFilePath("transactions.csv")
+
+	import os
+	if not os.path.exists(transactionsPath):
+		# Not in the data root, so guess at the current directory
+		transactionsPath = 'transactions.csv'
+
+	#print("Using a transactions path of", transactionsPath)
+	return transactionsPath
+
+
 def allTransactions():
 	global _transactions
 	
 	if _transactions == None:
-		_transactions = _readTransactionsCSV()
+		_transactions = _readTransactionsCSV(determineTransactionsFilePath())
 	
 	return _transactions
 
