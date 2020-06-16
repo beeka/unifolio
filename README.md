@@ -12,8 +12,11 @@ Build with:
 
 Run with:
 
-	docker run --rm --volume data:/home/appuser/data -t -i unifolio
+	docker run --rm --name unifolio --volume "$(pwd)/data:/opt/data" -t -i unifolio
+	
+or on Windows, something like:
 
+	docker run --rm --name unifolio --volume C:\Projects\unifolio\data:/opt/data -t -i unifolio
 
 ## Places to fetch data
 

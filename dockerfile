@@ -8,7 +8,11 @@ RUN useradd --create-home appuser
 WORKDIR /home/appuser
 USER appuser
 
-COPY --chown=appuser . .
+COPY --chown=appuser *.py ./
+COPY --chown=appuser prices prices
 
+ENV DATA_ROOT /opt/data
+
+VOLUME /opt/data
 
 CMD [ "python", "./service.py" ]
