@@ -4,6 +4,31 @@
 
 history_root = 'prices'
 
+def priceHistoryPathFor(identifier):
+	"""Determines the path for the equity price history, creating / copying seed file as necessary"""
+
+	import paths
+	historyPath = paths.dataFilePath(history_root)
+	
+	import os
+	csvpath = os.path.join(historyPath, identifier + '.csv')
+
+	if not os.path.exists(csvpath):
+		#print("Warning:", csvpath, "does not exist, seeing if we have a seed file for", identifier)
+		# See if we have a seed file from the repo
+		seedPath = os.path.join(history_root, identifier + '.csv')
+		if os.path.exists(seedPath):
+			# Copy the seed file, making any required directories first
+			csvDir = os.path.dirname(csvpath)
+			if not os.path.exists(csvDir):
+				os.makedirs(csvDir)
+			print("Info: Copying seed file", seedPath, "to bootstrap prices for", identifier)
+			from shutil import copyfile
+			copyfile(seedPath, csvpath)
+
+	return csvpath
+
+
 def noteNewId(identifier, description):
 	"""Associates an identifier with a description by updating the index.csv file (or creating it if missing). Note that duplicates are not prevented."""
 	import csv
@@ -31,7 +56,7 @@ def store(date, identifier, value, description = None):
 	import os
 	
 	fieldnames = ['date', 'value']
-	csvpath = os.path.join(history_root, identifier + '.csv')
+	csvpath = priceHistoryPathFor(identifier)
 	
 	if not os.path.exists(csvpath):
 		#with open(csvpath, 'w', newline='') as csvfile:
@@ -77,10 +102,10 @@ def equityValues(identifier):
 	import os
 
 	if identifier not in _csv_cache:
-		csvpath = os.path.join(history_root, identifier + '.csv')
-
+		csvpath = priceHistoryPathFor(identifier)
+				
 		if not os.path.exists(csvpath):
-			print("Warning: No history of prices for", identifier)
+			print("Warning: No history of prices for", identifier, " [expecting ", csvpath, "]")
 			values = dict()
 		else:
 			values = readDateValues(csvpath)
