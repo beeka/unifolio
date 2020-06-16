@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# Exercise some of the functionality. Probably not a unit test per-se
-
-transaction_root = 'transactions'
+# Mangage reading of portfolio transactions
 
 
 def numberIn(s):
@@ -18,70 +16,16 @@ def numberIn(s):
 		return None
 
 
-def transactionFiles():
-	from glob import glob
-	import os
-	return sorted(glob(os.path.join(transaction_root, '*.csv')))
-
 _transactions = None
+
 
 def allTransactions():
 	global _transactions
 	
 	if _transactions == None:
-		#_transactions = _readAllTransactions()
 		_transactions = _readTransactionsCSV()
 	
 	return _transactions
-
-def _readAllTransactions():
-	import csv
-	from datetime import datetime
-	import codecs
-	
-	transactions = dict()
-	for csvpath in transactionFiles():
-		#print csvpath
-		#with open(csvpath, 'a', newline='') as csvfile:
-		with open(csvpath) as csvfile:
-			reader = csv.DictReader(codecs.EncodedFile(csvfile, 'utf8', 'utf_8_sig'))
-			# "Settlement Date","Date","Symbol","Sedol","ISIN","Quantity","Price","Description","Reference","Debit","Credit","Running Balance"
-			for row in reader:
-				#print(row)
-				#date = datetime.strptime(row['Settlement Date'], '%d/%m/%Y') # or Date?
-				date = datetime.strptime(row['Date'], '%d/%m/%Y') # NB: settlement is the date the transaction has cleared?
-				identifier = row['Sedol']
-				quantity = row['Quantity']
-				price = numberIn(row['Price'])
-				debit = row['Debit']
-				credit = row['Credit']
-				action = None
-				value = None
-				if debit != '':
-					action = 'buy'
-					value = numberIn(debit)
-				elif credit != '':
-					action = 'sell'
-					value = numberIn(credit)
-				#print(date, identifier, quantity, 'x', price, debit, credit, action, value)
-				
-				if identifier == '' or quantity == '':
-					continue # Probably a subscription, not a buy / sell, or a dividend
-					
-				# Add the transaction
-				if date not in transactions:
-					transactions[date] = dict()
-				
-				if identifier not in transactions[date]:
-					transactions[date][identifier] = {
-						'action' : action,
-						'isin' : identifier,
-						'sedol' : identifier,
-						'value' : value,
-						'quantity' : quantity,
-						'price' : price}
-
-	return transactions
 
 
 def _readTransactionsCSV(transactionsFilePath = 'transactions.csv'):
