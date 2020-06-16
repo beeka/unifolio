@@ -3,13 +3,16 @@
 
 from datetime import *
 
-def update():
+def updatePrices():
 	try:
 		import tracker
 		tracker.updateAll()
 	except:
 		print("Error updating prices, using what we have")
 
+
+
+def updateAnalysis():
 	from datetime import datetime
 	now = datetime.now()
 	
@@ -37,25 +40,46 @@ def update():
 
 
 
+def nextOccurrenceOf(hours, minutes, seconds):
+	# Set the next run time for the next 3am 
+	nextTime = datetime.combine(date.today(), time(hours, minutes, seconds, 0))
+	while datetime.now() > nextTime:
+		nextTime = nextTime + timedelta(days = 1)
+
+	return nextTime
+
+
+
 def runScheduler():
 	from time import sleep
 	
 	# Run on startup, as it proves things are working (if nothing else)
-	update()
+	updatePrices()
+	updateAnalysis()
 	
-	# Set the next run time for 11pm today
-	nextTime = datetime.combine(date.today(), time(23, 0,0 , 0))
-	print("Sleeping until", nextTime.strftime('%d/%m/%Y %H:%M'))
+	nextPricesUpdateAt = nextOccurrenceOf(23, 0, 0) # Fetch prices at the end of the day
+	nextAnalysisAt = nextOccurrenceOf(3, 0, 0) # 3am
+
+	print("Prices will next update at", nextPricesUpdateAt.strftime('%d/%m/%Y %H:%M'))
+	print("Analysis will next update at", nextAnalysisAt.strftime('%d/%m/%Y %H:%M'))
 	
-	# Simple schedule to start with... every five minutes
+	# Check the timings every five minutes, forever
 	while True:
-		if datetime.now() > nextTime:
+		if datetime.now() > nextPricesUpdateAt:
 
-			print("Running portfolio update at", datetime.now().strftime('%d/%m/%Y %H:%M'))
-			update()
+			print("Running price update at", datetime.now().strftime('%d/%m/%Y %H:%M'))
+			updatePrices()
 
-			nextTime = nextTime + timedelta(days = 1)
-			print("Sleeping until", nextTime.strftime('%d/%m/%Y %H:%M'))
+			nextPricesUpdateAt = nextPricesUpdateAt + timedelta(days = 1)
+			print("Sleeping until", nextPricesUpdateAt.strftime('%d/%m/%Y %H:%M'))
+
+		if datetime.now() > nextAnalysisAt:
+
+			print("Running analysis update at", datetime.now().strftime('%d/%m/%Y %H:%M'))
+			updateAnalysis()
+
+			nextAnalysisAt = nextAnalysisAt + timedelta(days = 1)
+			print("Sleeping until", nextAnalysisAt.strftime('%d/%m/%Y %H:%M'))
 
 		# Wait a while before checking again
 		sleep(300) # 300 seconds -> 5 minutes
