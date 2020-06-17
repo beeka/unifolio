@@ -9,6 +9,8 @@ def updatePrices():
 		tracker.updateAll()
 	except:
 		print("Error updating prices, using what we have")
+		import traceback
+		traceback.print_exc()
 
 
 
