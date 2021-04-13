@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 # Manage the portfolio of shares
 
 from decimal import Decimal
@@ -77,7 +79,7 @@ class Portfolio(object):
 
 	def updatePrice(self, identifier, price):
 		if price == None:
-#			print '*** No value for equity', identifier, portfolio[identifier].quantity
+#			print('*** No value for equity', identifier, portfolio[identifier].quantity)
 			self.equities[identifier].lastPrice = Decimal('0.0')
 		else:
 			self.equities[identifier].lastPrice = Decimal(price)
