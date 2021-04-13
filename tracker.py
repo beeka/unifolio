@@ -121,6 +121,11 @@ def equityValues(identifier):
 def valueAt(identifier, date):
 	#print "valueAt(id='%s', date=%s)" % (identifier, date)
 
+	# Cash is always £1
+	if identifier == 'CASH':
+		#print("Defaulting CASH to £1.0")
+		return 1.0
+
 	from datetime import datetime
 
 	values = equityValues(identifier)

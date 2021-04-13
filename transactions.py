@@ -91,7 +91,16 @@ def _readTransactionsCSV(transactionsFilePath = 'transactions.csv'):
 				'quantity' : quantity,
 				'price' : price}
 			else:
-				print("*** Already have a transaction on", date, "for", identifier, "x", quantity)
+				transaction = transactions[date][identifier]
+				# Only currently designed for dividends (new CASH)
+				if transaction['price'] == price and transaction['action'] == action:
+					#print("*** Merging transactions for", identifier, "on", date)
+					transaction['value'] = transaction['value'] + value
+					transaction['quantity'] = transaction['quantity'] + quantity
+					transactions[date][identifier] = transaction
+					#print("Merged:", transactions[date][identifier])
+				else:
+					print("*** Ignoring transaction for", identifier, "on", date, "(for", quantity, "units) as unable to merge with transactions on that date")
 
 	return transactions
 
