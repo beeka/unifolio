@@ -41,14 +41,25 @@ def getPortfolioCurrentValue():
 
 if __name__ == "__main__":
 	# execute only if run as a script
+	import argparse
+
 	from datetime import datetime
-	now = datetime.now()
+
+	parser = argparse.ArgumentParser(description='Calculate the value of a portfolio.')
+	parser.add_argument('--date', '-d', dest='date', action='store',
+		type=lambda s: datetime.strptime(s, '%Y-%m-%d'),
+		default=datetime.now(),
+		help='The valuation date in YYYY-MM-DD format (default: now)')
+
+	args = parser.parse_args()
+
+	valuation_date = args.date
 	
 	import portfolio as folio
-	portfolio = folio.getPortfolioAt(now)
+	portfolio = folio.getPortfolioAt(valuation_date)
 	
-	value = getPortfolioValueAt(now, portfolio = portfolio)
+	value = getPortfolioValueAt(valuation_date, portfolio = portfolio)
 	
-	print("Portfolio at", now.strftime('%Y-%m-%d %H:%M:%S'), "is")
+	print("Portfolio at", valuation_date.strftime('%Y-%m-%d %H:%M:%S'), "is")
 	portfolio.dump()
 	print("Current portfolio value is", value)
