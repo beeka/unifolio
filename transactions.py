@@ -36,7 +36,13 @@ def allTransactions():
 	global _transactions
 	
 	if _transactions == None:
-		_transactions = _readTransactionsCSV(determineTransactionsFilePath())
+		try:
+			_transactions = _readTransactionsCSV(determineTransactionsFilePath())
+		except (IOError, OSError) as e:
+			import os
+			print("Error opening transactions file:", determineTransactionsFilePath(), "from", os.getcwd())
+			print(e)
+			return dict()
 	
 	return _transactions
 

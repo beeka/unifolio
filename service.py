@@ -20,6 +20,10 @@ def updateAnalysis():
 	
 	import portfolio as folio
 	portfolio = folio.getPortfolioAt(now)
+	
+	if len(portfolio.getEquities()) == 0:
+		print("Nothing in the portfolio, so doing nothing")
+		return
 
 	import valuator
 	value = valuator.getPortfolioValueAt(now, portfolio = portfolio)
