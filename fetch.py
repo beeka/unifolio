@@ -9,11 +9,19 @@ def getHttpPage(url):
 	try:
 		# Try the Python-3 way first
 		import urllib.request, urllib.error, urllib.parse
-		response = urllib.request.urlopen(url)
-		html_doc = response.read()
-		return html_doc
-
-	except:
+		try:
+			response = urllib.request.urlopen(url)
+			html_doc = response.read()
+			return html_doc
+		except urllib.error.HTTPError as e:
+			message = 'HTTP error [%s] "%s" fetching %s' % (e.code, e.reason, url)
+			print(message)
+			return message
+		except urllib.error.URLError as e:
+			message = 'URL error "%s" fetching %s' % (e.reason, url)
+			print(message)
+			return message
+	except ModuleNotFoundError:
 		# That didn't work, so try Python-2 style
 		import urllib2
 		response = urllib2.urlopen(url)
