@@ -14,7 +14,7 @@ def priceHistoryPathFor(identifier):
 	csvpath = os.path.join(historyPath, identifier + '.csv')
 
 	if not os.path.exists(csvpath):
-		#print("Warning:", csvpath, "does not exist, seeing if we have a seed file for", identifier)
+		print("Warning:", csvpath, "does not exist, seeing if we have a seed file for", identifier)
 		# See if we have a seed file from the repo
 		seedPath = os.path.join(history_root, identifier + '.csv')
 		if os.path.exists(seedPath):
@@ -55,10 +55,13 @@ def store(date, identifier, value, description = None):
 	import csv
 	import os
 	
+	#print('Storing value of', identifier, 'at', date, 'as', value)
+	
 	fieldnames = ['date', 'value']
 	csvpath = priceHistoryPathFor(identifier)
 	
 	if not os.path.exists(csvpath):
+		print("Creating new store for", identifier, "in", csvpath)
 		#with open(csvpath, 'w', newline='') as csvfile:
 		with open(csvpath, 'w') as csvfile:
 			writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -119,7 +122,7 @@ def equityValues(identifier):
 
 
 def valueAt(identifier, date):
-	#print "valueAt(id='%s', date=%s)" % (identifier, date)
+	#print("valueAt(id='%s', date=%s)" % (identifier, date))
 
 	# Cash is always £1
 	if identifier == 'CASH':
@@ -171,7 +174,8 @@ def updateAll():
 		(title, value) = fetch.getCurrentEquityPrice(sedol)
 
 		print(now, sedol, value, title)
-		if value > 0:
+		if value > 0 and valueAt(sedol, now) != value:
+			# Value looks valid and changed from the previous value, so storing it
 			store(now, sedol, value, title)
 
 

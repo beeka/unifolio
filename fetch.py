@@ -140,10 +140,15 @@ def getCurrentEquityPrice(sedol):
 		# extract what is likely to be the sedol
 		sedol = sedol[4:11] # GB00B84DY642 => B84DY64
 
-	#print "fetching price for '%s'" % (sedol)
-	result = getCurrentSharePrice(sedol)
-	if result[0] == None:
-		#result = getCurrentFundPrice(sedol)
-		result = getCurrentFundNav(sedol)
+	#print("fetching price for '%s'" % (sedol))
+
+	if sedol == "CASH":
+		# CASH is currently used to capture dividend / interest
+		result = ("Cash", 1.0)
+	else:
+		result = getCurrentSharePrice(sedol)
+		if result[0] == None:
+			#result = getCurrentFundPrice(sedol)
+			result = getCurrentFundNav(sedol)
 
 	return result
