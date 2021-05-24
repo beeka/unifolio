@@ -129,11 +129,14 @@ def valueAt(identifier, date):
 		#print("Defaulting CASH to £1.0")
 		return 1.0
 
-	from datetime import datetime
-
 	values = equityValues(identifier)
-	
-	if values == None:
+
+	# Update values with portfolio buy/sell prices
+	import transactions
+	values.update(transactions.allTransactionsFor(identifier))
+
+	# Quit now if there are no values to go on
+	if len(values) == 0:
 		return None
 	
 	# Try our luck first with an exact match

@@ -46,7 +46,17 @@ def allTransactions():
 	
 	return _transactions
 
-
+def allTransactionsFor(sedol):
+	result = dict()
+	
+	txn = allTransactions()
+	for date in txn.keys():
+		if sedol in txn[date]:
+			#print(txn[date][sedol])
+			result[date] = txn[date][sedol]['price']
+	
+	return result
+			
 def _readTransactionsCSV(transactionsFilePath = 'transactions.csv'):
 	import csv
 	from datetime import datetime
