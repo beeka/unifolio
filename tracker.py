@@ -2,6 +2,8 @@
 # Updates the price history for equities in the portfolio
 # Call this periodically as a cron job
 
+from __future__ import print_function
+
 history_root = 'prices'
 
 def priceHistoryPathFor(identifier):
@@ -99,25 +101,27 @@ def readDateValues(csvpath):
 	return values
 
 _csv_cache = dict()
+_csv_dates = dict()
 
 def equityValues(identifier):
+	'''Return a dictionary of equity values indexed by date'''
 	import csv
 	import os
 
-	if identifier not in _csv_cache:
-		csvpath = priceHistoryPathFor(identifier)
-				
-		if not os.path.exists(csvpath):
-			print("Warning: No history of prices for", identifier, " [expecting ", csvpath, "]")
-			values = dict()
-		else:
-			values = readDateValues(csvpath)
-
-		_csv_cache[identifier] = values
+	csvpath = priceHistoryPathFor(identifier)
+	if not os.path.exists(csvpath):
+		print("Warning: No history of prices for", identifier, " [expecting ", csvpath, "]")
+		values = dict()
 	else:
-		values = _csv_cache[identifier]
+		csvdate = os.path.getmtime(csvpath)
+		if identifier not in _csv_cache or _csv_dates.get(csvpath) != csvdate:
+			values = readDateValues(csvpath)
+			_csv_cache[identifier] = values
+			_csv_dates[csvpath] = csvdate
+		else:
+			values = _csv_cache[identifier]
 	
-	#print len(values), "datapoints for", identifier
+	#print(len(values), "datapoints for", identifier)
 	return values
 
 
