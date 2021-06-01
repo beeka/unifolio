@@ -60,6 +60,6 @@ if __name__ == "__main__":
 	
 	value = getPortfolioValueAt(valuation_date, portfolio = portfolio)
 	
-	print("Portfolio at", valuation_date.strftime('%Y-%m-%d %H:%M:%S'), "is")
+	print("Portfolio at", valuation_date.strftime('%Y-%m-%d %H:%M:%S'), "was")
 	portfolio.dump()
-	print("Current portfolio value is", value)
+	print("Value at", valuation_date.strftime('%Y-%m-%d %H:%M:%S'), "was", value)
