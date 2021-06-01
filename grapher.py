@@ -196,7 +196,7 @@ def determinePerformance(history):
 
 			if n > 1:
 				yearEnd = subtractYears(recentDate, n-1)
-				oneYearPerformance = ppuIncrease(history, lastYear, 		yearEnd)
+				oneYearPerformance = ppuIncrease(history, lastYear, yearEnd)
 			else:
 				oneYearPerformance = ppuChangePercent
 
